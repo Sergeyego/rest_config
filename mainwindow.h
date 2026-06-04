@@ -43,5 +43,6 @@ private slots:
     void updAutorest();
     void updGroup(int index);
     void createPassword();
+    void setDefaultProg();
 };
 #endif // MAINWINDOW_H

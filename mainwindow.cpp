@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->action_autorest_api,SIGNAL(triggered(bool)),this,SLOT(updAutorest()));
     connect(mapperUser,SIGNAL(currentIndexChanged(int)),this,SLOT(updGroup(int)));
     connect(ui->pushButtonPass,SIGNAL(clicked(bool)),this,SLOT(createPassword()));
+    connect(modelOlaps,SIGNAL(sigAboutToBeInsert()),this,SLOT(setDefaultProg()));
 
     modelTbl->select();
     modelUsers->select();
@@ -92,7 +93,7 @@ void MainWindow::updAutorest()
     QByteArray data;
     bool ok = RestConnection::instance()->sendSyncGet("api/autorest/upddata",data);
     if (ok){
-        QMessageBox::information(this,tr("Обновлено устешно"),data,QMessageBox::Ok);
+        QMessageBox::information(this,tr("Обновлено успешно"),data,QMessageBox::Ok);
     }
 }
 
@@ -109,7 +110,7 @@ void MainWindow::createPassword()
     bool ok;
     QString pass = QInputDialog::getText(this,tr("Введите пароль"),tr("Пароль:"),QLineEdit::Password,"",&ok);
     if (ok) {
-        qDebug() << "Пользователь ввел:" << pass;
+        //qDebug() << "Пользователь ввел:" << pass;
         QJsonDocument doc;
         QJsonObject object
             {
@@ -120,5 +121,13 @@ void MainWindow::createPassword()
         QByteArray body=doc.toJson();
         QByteArray data;
         RestConnection::instance()->sendSyncRequest("api/users","PUT",body,data);
+    }
+}
+
+void MainWindow::setDefaultProg()
+{
+    if (modelOlaps->rowCount()>0) {
+        QString prog = modelOlaps->getModelData(modelOlaps->rowCount()-1,"prog").toString();
+        modelOlaps->setDefaultValue("prog",prog);
     }
 }

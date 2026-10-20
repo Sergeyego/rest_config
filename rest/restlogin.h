@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include "rest/restconnection.h"
+#include "rest/resterror.h"
 
 namespace Ui {
     class RestLogin;
@@ -18,16 +19,16 @@ class RestLogin : public QDialog
     Q_OBJECT
 
 public:
-    explicit RestLogin(const QString title, QWidget *parent = nullptr);
+    explicit RestLogin(const QString &title, QWidget *parent = nullptr);
     ~RestLogin();
-    void setUser(QString user);
-    void setPassword(QString pass);
-    void setHost(QString host);
+    void setUser(const QString &user);
+    void setPassword(const QString &pass);
+    void setHost(const QString &host);
     void setPort(int port);
 
 private:
     Ui::RestLogin *ui;
-    QString currentUrl();
+    QString currentUrl() const;
 
 private slots:
     void restconnect();

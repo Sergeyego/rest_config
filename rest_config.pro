@@ -13,6 +13,8 @@ SOURCES += \
     rest/restcombobox.cpp \
     rest/restconnection.cpp \
     rest/restdateedit.cpp \
+    rest/resterror.cpp \
+    rest/restfilter.cpp \
     rest/restitemdelegate.cpp \
     rest/restlogin.cpp \
     rest/restmapper.cpp \
@@ -20,7 +22,8 @@ SOURCES += \
     rest/restrotablemodel.cpp \
     rest/resttabledialog.cpp \
     rest/resttablemodel.cpp \
-    rest/resttableview.cpp
+    rest/resttableview.cpp \
+    rest/tempfilemanager.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -28,6 +31,8 @@ HEADERS += \
     rest/restcombobox.h \
     rest/restconnection.h \
     rest/restdateedit.h \
+    rest/resterror.h \
+    rest/restfilter.h \
     rest/restitemdelegate.h \
     rest/restlogin.h \
     rest/restmapper.h \
@@ -35,7 +40,9 @@ HEADERS += \
     rest/restrotablemodel.h \
     rest/resttabledialog.h \
     rest/resttablemodel.h \
-    rest/resttableview.h
+    rest/resttableview.h \
+    rest/resttypes.h \
+    rest/tempfilemanager.h
 
 FORMS += \
     mainwindow.ui \
@@ -46,6 +53,9 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+win32:RC_FILE = ico.rc
+macx:ICON = ico.icns
 
 RESOURCES += \
     res.qrc

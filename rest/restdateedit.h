@@ -2,6 +2,7 @@
 #define RESTDATEEDIT_H
 
 #include <QDateEdit>
+#include <QDateTimeEdit>
 #include <QCalendarWidget>
 #include <QShowEvent>
 #include <QLineEdit>
@@ -10,40 +11,43 @@ class CustomCalendarWidget : public QCalendarWidget
 {
     Q_OBJECT
 public:
-    CustomCalendarWidget(QWidget *parent = nullptr);
-    virtual void showEvent(QShowEvent *event);
+    explicit CustomCalendarWidget(QWidget *parent = nullptr);
+
 signals:
     void shown();
+
+protected:
+    void showEvent(QShowEvent *event) override;
 };
 
 class RestDateEdit : public QDateEdit
 {
     Q_OBJECT
 public:
-    RestDateEdit(QWidget *parent = nullptr);
+    explicit RestDateEdit(QWidget *parent = nullptr);
 
 public slots:
-    void setDate(QDate date);
-    void clear();
+    void setDate(const QDate &date);
+    void clear() override;
 
 private slots:
-    void txtChangeSlot(QString txt);
-    void shVid();
+    void txtChangeSlot(const QString &txt);
+    void onCalendarShown();
 };
 
 class RestDateTimeEdit : public QDateTimeEdit
 {
     Q_OBJECT
 public:
-    RestDateTimeEdit(QWidget *parent = nullptr);
+    explicit RestDateTimeEdit(QWidget *parent = nullptr);
 
 public slots:
     void setDateTime(const QDateTime &dateTime);
-    void clear();
+    void clear() override;
 
 private slots:
-    void txtChangeSlot(QString txt);
-    void shVid();
+    void txtChangeSlot(const QString &txt);
+    void onCalendarShown();
 };
 
 #endif // RESTDATEEDIT_H

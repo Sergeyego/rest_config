@@ -1,85 +1,106 @@
 #include "restdateedit.h"
 
-RestDateEdit::RestDateEdit(QWidget *parent) : QDateEdit(parent)
+// ============================================================
+// CustomCalendarWidget
+// ============================================================
+CustomCalendarWidget::CustomCalendarWidget(QWidget *parent)
+    : QCalendarWidget(parent)
 {
-    this->setCalendarPopup(true);
-    CustomCalendarWidget * pCW = new CustomCalendarWidget(this);
-    this->setCalendarWidget(pCW);
-    this->setDisplayFormat("dd.MM.yy");
-    this->setSpecialValueText("NULL");
-    connect(this->lineEdit(),SIGNAL(textChanged(QString)),this,SLOT(txtChangeSlot(QString)));
-    connect(pCW,SIGNAL(shown()),this,SLOT(shVid()));
-
-}
-
-void RestDateEdit::setDate(QDate date)
-{
-    QDateEdit::setDate(date.isNull()? this->minimumDate() : date);
-}
-
-void RestDateEdit::clear()
-{
-    QDateEdit::setDate(this->minimumDate());
-}
-
-void RestDateEdit::txtChangeSlot(QString txt)
-{
-    if (txt.isEmpty()){
-        this->setDate(this->minimumDate());
-    }
-}
-
-void RestDateEdit::shVid()
-{
-    if (this->date()==this->minimumDate()){
-        this->setDate(QDate::currentDate());
-    }
-}
-
-RestDateTimeEdit::RestDateTimeEdit(QWidget *parent) : QDateTimeEdit(parent)
-{
-    this->setCalendarPopup(true);
-    CustomCalendarWidget * pCW = new CustomCalendarWidget(this);
-    this->setCalendarWidget(pCW);
-    this->setDisplayFormat("dd.MM.yy hh:mm");
-    this->setSpecialValueText("NULL");
-    connect(this->lineEdit(),SIGNAL(textChanged(QString)),this,SLOT(txtChangeSlot(QString)));
-    connect(pCW,SIGNAL(shown()),this,SLOT(shVid()));
-}
-
-void RestDateTimeEdit::setDateTime(const QDateTime &dateTime)
-{
-    QDateTimeEdit::setDateTime(dateTime.isNull()? this->minimumDateTime() : dateTime);
-}
-
-void RestDateTimeEdit::clear()
-{
-    QDateTimeEdit::setDateTime(this->minimumDateTime());
-}
-
-void RestDateTimeEdit::txtChangeSlot(QString txt)
-{
-    if (txt.isEmpty()){
-        this->setDateTime(this->minimumDateTime());
-    }
-}
-
-void RestDateTimeEdit::shVid()
-{
-    if (this->dateTime()==this->minimumDateTime()){
-        this->setDateTime(QDateTime::currentDateTime());
-    }
-}
-
-CustomCalendarWidget::CustomCalendarWidget(QWidget *parent) : QCalendarWidget(parent)
-{
-    this->setFirstDayOfWeek(Qt::Monday);
+    setFirstDayOfWeek(Qt::Monday);
 }
 
 void CustomCalendarWidget::showEvent(QShowEvent *event)
 {
-    if (event->type() == QEvent::Show){
-        emit shown();
-    }
+    emit shown();
     QCalendarWidget::showEvent(event);
+}
+
+// ============================================================
+// RestDateEdit
+// ============================================================
+RestDateEdit::RestDateEdit(QWidget *parent) : QDateEdit(parent)
+{
+    setCalendarPopup(true);
+
+    auto *cw = new CustomCalendarWidget(this);
+    setCalendarWidget(cw);
+
+    setDisplayFormat(QStringLiteral("dd.MM.yy"));
+    setSpecialValueText(QStringLiteral("NULL"));
+
+    connect(lineEdit(), &QLineEdit::textChanged,
+            this, &RestDateEdit::txtChangeSlot);
+    connect(cw, &CustomCalendarWidget::shown,
+            this, &RestDateEdit::onCalendarShown);
+}
+
+void RestDateEdit::setDate(const QDate &date)
+{
+    QDateEdit::setDate(date.isNull() ? minimumDate() : date);
+}
+
+void RestDateEdit::clear()
+{
+    QDateEdit::setDate(minimumDate());
+}
+
+void RestDateEdit::txtChangeSlot(const QString &txt)
+{
+    if (txt.isEmpty()) {
+        blockSignals(true);
+        setDate(minimumDate());
+        blockSignals(false);
+    }
+}
+
+void RestDateEdit::onCalendarShown()
+{
+    if (date() == minimumDate()) {
+        setDate(QDate::currentDate());
+    }
+}
+
+// ============================================================
+// RestDateTimeEdit
+// ============================================================
+RestDateTimeEdit::RestDateTimeEdit(QWidget *parent) : QDateTimeEdit(parent)
+{
+    setCalendarPopup(true);
+
+    auto *cw = new CustomCalendarWidget(this);
+    setCalendarWidget(cw);
+
+    setDisplayFormat(QStringLiteral("dd.MM.yy HH:mm"));
+    setSpecialValueText(QStringLiteral("NULL"));
+
+    connect(lineEdit(), &QLineEdit::textChanged,
+            this, &RestDateTimeEdit::txtChangeSlot);
+    connect(cw, &CustomCalendarWidget::shown,
+            this, &RestDateTimeEdit::onCalendarShown);
+}
+
+void RestDateTimeEdit::setDateTime(const QDateTime &dateTime)
+{
+    QDateTimeEdit::setDateTime(dateTime.isNull() ? minimumDateTime() : dateTime);
+}
+
+void RestDateTimeEdit::clear()
+{
+    QDateTimeEdit::setDateTime(minimumDateTime());
+}
+
+void RestDateTimeEdit::txtChangeSlot(const QString &txt)
+{
+    if (txt.isEmpty()) {
+        blockSignals(true);
+        setDateTime(minimumDateTime());
+        blockSignals(false);
+    }
+}
+
+void RestDateTimeEdit::onCalendarShown()
+{
+    if (dateTime() == minimumDateTime()) {
+        setDateTime(QDateTime::currentDateTime());
+    }
 }

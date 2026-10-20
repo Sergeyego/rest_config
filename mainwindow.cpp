@@ -83,7 +83,7 @@ void MainWindow::saveSettings()
 void MainWindow::updData(int index)
 {
     int id_tbl=mapper->modelData(index,"id").toInt();
-    modelTblData->setFilter(modelTblData->tableName()+".id_table="+QString::number(id_tbl));
+    modelTblData->setFilter(RestFilter::rule(modelTblData->tableName(),"id_table",RestFilter::Op::Eq,id_tbl));
     modelTblData->setDefaultValue("id_table",id_tbl);
     modelTblData->select();
 }
@@ -100,7 +100,7 @@ void MainWindow::updAutorest()
 void MainWindow::updGroup(int index)
 {
     QVariant id_user=mapperUser->modelData(index,"id");
-    modelUserGroup->setFilter(modelUserGroup->tableName()+".id_user="+id_user.toString());
+    modelUserGroup->setFilter(/*modelUserGroup->tableName()+".id_user="+id_user.toString()*/RestFilter::rule(modelUserGroup->tableName(),"id_user",RestFilter::Op::Eq,id_user.toInt()));
     modelUserGroup->setDefaultValue("id_user",id_user);
     modelUserGroup->select();
 }

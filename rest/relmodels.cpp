@@ -1,28 +1,26 @@
 #include "relmodels.h"
 
-RelModels* RelModels::relModels_instance=nullptr;
-
 RelModels::RelModels(QObject *parent) : QObject(parent)
 {
-    connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(deleteLater()));
+
 }
 
 RelModels *RelModels::instance()
 {
-    if (relModels_instance==nullptr){
-        relModels_instance = new RelModels();
-    }
-    return relModels_instance;
+    static RelModels _instance;
+    return &_instance;
 }
 
-RestRelModel *RelModels::getModel(QString name)
+RestRelModel *RelModels::getModel(const QString &name)
 {
-    if (!map.contains(name)){
-        RestRelModel *model = new RestRelModel(name,this);
-        model->refresh();
-        map.insert(name, model);
+    auto it = map.constFind(name);
+    if (it != map.constEnd()) {
+        return it.value();
     }
-    return map.value(name, nullptr);
+    auto *model = new RestRelModel(name, this);
+    model->refresh();
+    map.insert(name, model);
+    return model;
 }
 
 RelModels::~RelModels()
@@ -30,10 +28,11 @@ RelModels::~RelModels()
     //qDebug()<<"delete rels";
 }
 
-void RelModels::updateRels(QVector<RestTableModel *> models)
+void RelModels::updateRels(const QVector<RestTableModel *> &models)
 {
     QSet<QString> relSet;
     for (RestTableModel *model : models){
+        if (!model) continue;
         for (int i=0; i<model->columnCount(); i++){
             QString rel = model->columnInfo(i).relnam;
             if (!rel.isEmpty()){
@@ -42,7 +41,10 @@ void RelModels::updateRels(QVector<RestTableModel *> models)
         }
     }
     for (const QString &rel : relSet){
-        getModel(rel)->refresh();
+        auto it = map.constFind(rel);
+        if (it != map.constEnd()) {
+            it.value()->refresh();
+        }
     }
 }
 

@@ -3,13 +3,18 @@
 
 #include <QAbstractTableModel>
 #include <QObject>
+#include <QApplication>
+#include <QMessageBox>
 #include "rest/resttablemodel.h"
+#include "rest/resttypes.h"
+#include "rest/resterror.h"
 
 class RestRoTableModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
     explicit RestRoTableModel(QObject *parent = nullptr);
+    ~RestRoTableModel();
     QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
     int rowCount(const QModelIndex &parent=QModelIndex()) const;
     int columnCount(const QModelIndex &parent=QModelIndex()) const;
@@ -22,6 +27,7 @@ public:
     QString title() const;
     QString path() const;
     QVariant getModelData(int row, QString col) const;
+    int findRowByKey(QVariant key, QString col) const;
 
 public slots:
     void select();
@@ -32,8 +38,10 @@ private slots:
     void processNextRequest();
     void onResult();
 
-private:
+protected:
     QVector<QVector<cellData>> modelData;
+
+private:
     QMap<QString,colInfo> colMap;
     QString _path;
     QString _title;

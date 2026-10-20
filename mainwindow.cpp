@@ -100,7 +100,7 @@ void MainWindow::updAutorest()
 void MainWindow::updGroup(int index)
 {
     QVariant id_user=mapperUser->modelData(index,"id");
-    modelUserGroup->setFilter(/*modelUserGroup->tableName()+".id_user="+id_user.toString()*/RestFilter::rule(modelUserGroup->tableName(),"id_user",RestFilter::Op::Eq,id_user.toInt()));
+    modelUserGroup->setFilter(RestFilter::rule(modelUserGroup->tableName(),"id_user",RestFilter::Op::Eq,id_user.toInt()));
     modelUserGroup->setDefaultValue("id_user",id_user);
     modelUserGroup->select();
 }

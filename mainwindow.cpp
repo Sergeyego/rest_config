@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent)
     mapper->addMapping(ui->lineEditNam,"nam");
     mapper->addMapping(ui->lineEditTbl,"tablename");
     mapper->addMapping(ui->lineEditSort,"sort");
+    mapper->addEmptyLock(ui->tableViewData);
+    mapper->addLock(ui->pushButtonUpd);
 
     ui->horizontalLayoutMap->insertWidget(0,mapper);
 
@@ -51,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(mapperUser,SIGNAL(currentIndexChanged(int)),this,SLOT(updGroup(int)));
     connect(ui->pushButtonPass,SIGNAL(clicked(bool)),this,SLOT(createPassword()));
     connect(modelOlaps,SIGNAL(sigAboutToBeInsert()),this,SLOT(setDefaultProg()));
+    connect(ui->pushButtonUpd,SIGNAL(clicked(bool)),modelTbl,SLOT(select()));
 
     modelTbl->select();
     modelUsers->select();
